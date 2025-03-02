@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV File Upload</title>
+</head>
+<body>
+    <h1>Upload CSV File</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="csvFile">Choose CSV file:</label>
+        <input type="file" id="csvFile" name="file" accept=".csv" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+
+            if (file) {
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/upload-csv/', {
+                        method: 'PUT',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        alert('CSV file uploaded and processed successfully');
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Error: ${errorData.detail}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while uploading the file');
+                }
+            } else {
+                alert('Please select a CSV file to upload');
+            }
+        });
+    </script>
+</body>
+</html>
